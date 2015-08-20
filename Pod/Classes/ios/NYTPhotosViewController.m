@@ -48,6 +48,8 @@ static const UIEdgeInsets NYTPhotosViewControllerCloseButtinImageInsets = {3, 0,
 
 @property (nonatomic) id <NYTPhoto> initialPhoto;
 
+@property (nonatomic) BOOL isHidden;
+
 @end
 
 @implementation NYTPhotosViewController
@@ -118,13 +120,30 @@ static const UIEdgeInsets NYTPhotosViewControllerCloseButtinImageInsets = {3, 0,
     }
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (![UIApplication sharedApplication].statusBarHidden) {
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+        self.isHidden = YES;
+    }
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    if (self.isHidden) {
+        [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+    }
+}
+
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
     self.pageViewController.view.frame = self.view.bounds;
     self.overlayView.frame = self.view.bounds;
 }
-
+/*
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
@@ -132,7 +151,7 @@ static const UIEdgeInsets NYTPhotosViewControllerCloseButtinImageInsets = {3, 0,
 - (UIStatusBarAnimation)preferredStatusBarUpdateAnimation {
     return UIStatusBarAnimationFade;
 }
-
+*/
 #pragma mark - NYTPhotosViewController
 
 - (instancetype)initWithPhotos:(NSArray *)photos {
